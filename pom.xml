@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- Model version -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Artifact Configuration -->
+    <groupId>org.jboss.aerogear</groupId>
+    <artifactId>proxy-aggregator</artifactId>
+    <version>1.0.0.Alpha1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <name>Stefan Miklosovic</name>
+            <email>miklosovic@gmail.com</email>
+        </developer>
+    </developers>
+
+    <!-- Prerequisites -->
+    <prerequisites>
+        <maven>3.0.0</maven>
+    </prerequisites>
+
+    <!-- modules -->
+    <modules>
+        <module>model</module>
+        <module>impl</module>
+    </modules>
+
+    <!-- Properties -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <version.maven.compiler.plugin>3.3</version.maven.compiler.plugin>
+
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+
+        <maven.compiler.argument.target>1.7</maven.compiler.argument.target>
+        <maven.compiler.argument.source>1.7</maven.compiler.argument.source>
+    </properties>
+
+    <!-- Build -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.maven.compiler.plugin}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

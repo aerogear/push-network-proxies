@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- Model version -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss.aerogear</groupId>
+        <artifactId>proxy-aggregator</artifactId>
+        <version>1.0.0.Alpha1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <!-- Artifact Configuration -->
+    <artifactId>proxy</artifactId>
+
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <name>Stefan Miklosovic</name>
+            <email>miklosovic@gmail.com</email>
+        </developer>
+    </developers>
+
+    <!-- prerequisities -->
+    <prerequisites>
+        <maven>3.0.0</maven>
+    </prerequisites>
+
+    <!-- Properties -->
+    <properties>
+        <version.io.netty>4.0.23.Final</version.io.netty>
+        <version.gcm.server>1.0.2</version.gcm.server>
+        <version.airline>0.7</version.airline>
+        <version.gson>2.3.1</version.gson>
+        <version.arquillian.spacelift>1.0.0.Alpha7</version.arquillian.spacelift>
+        <version.little.proxy>1.1.0-beta-1-SNAPSHOT3</version.little.proxy>
+        <version.jackson.databind>2.3.0</version.jackson.databind>
+
+        <!-- Other -->
+        <program.name>proxy</program.name>
+
+        <version.maven.shade.plugin>2.3</version.maven.shade.plugin>
+        <version.really.executable.jar>1.4.1</version.really.executable.jar>
+    </properties>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.aerogear</groupId>
+            <artifactId>proxy-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${version.io.netty}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ganyo</groupId>
+            <artifactId>gcm-server</artifactId>
+            <version>${version.gcm.server}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${version.gson}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>airline</artifactId>
+            <version>${version.airline}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.arquillian.spacelift</groupId>
+            <artifactId>arquillian-spacelift</artifactId>
+            <version>${version.arquillian.spacelift}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.smiklosovic</groupId>
+            <artifactId>LittleProxy</artifactId>
+            <version>${version.little.proxy}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.jackson.databind}</version>
+        </dependency>
+    </dependencies>
+
+    <!-- Build -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${version.maven.shade.plugin}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.jboss.aerogear.proxy.ProxyCLI</mainClass>
+                                </transformer>
+                            </transformers>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.skife.maven</groupId>
+                <artifactId>really-executable-jar-maven-plugin</artifactId>
+                <version>${version.really.executable.jar}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>really-executable-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <flags>$DX_JAVA_OPTS</flags>
+                    <programFile>${program.name}</programFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+</project>

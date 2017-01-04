@@ -1,0 +1,143 @@
+== Proxy
+
+Proxy acts as a fake notification provider (APNS / GCM). From consumer point of view, the 
+notifications which the consumer sends to networks hit this proxy and proxy answers the consumer 
+back as if the response came from the real providers.
+
+This project is used for testing purposes.
+
+Installation is done by `mvn clean install`. Resulting binary is in `impl/target/proxy`.
+
+Proxy binary offers two commands. Every command covers the proxy for one notification platform.
+There are two platfroms implemented - APNS and GCM
+
+NOTE: If you want to start proxy for both networks, you have to have two running binaries of `proxy`.
+
+[source,bash]
+----
+$ ./proxy help
+usage: proxy <command> [<args>]
+
+The most commonly used proxy commands are:
+    apnsProxy   starts APNS proxy
+    gcmProxy    starts GCM proxy
+    help        Display help information
+
+----
+
+=== APNS proxy
+
+APNS proxy is started by `apnsProxy` command.
+
+[source,bash]
+----
+$ ./proxy help apnsProxy
+NAME
+        proxy apnsProxy - starts APNS proxy
+
+SYNOPSIS
+        proxy apnsProxy [--apnsKeystore <apnsKeystore>]
+                [--apnsKeystoreAlgorithm <apnsKeystoreAlgorithm>]
+                [--apnsKeystorePassword <apnsKeystorePassword>]
+                [--apnsKeystoreType <apnsKeystoreType>]
+                [--apnsMockFeedbackHost <apnsMockFeedbackHost>]
+                [--apnsMockFeedbackPort <apnsMockFeedbackPort>]
+                [--apnsMockGatewayHost <apnsMockGatewayHost>]
+                [--apnsMockGatewayPort <apnsMockGatewayPort>]
+                [--notificationEndpointHost <notificationEndpointHost>]
+                [--notificationEndpointPort <notificationEndpointPort>]
+
+OPTIONS
+        --apnsKeystore <apnsKeystore>
+            defaults to serverStore.p12 loaded from the jar
+
+        --apnsKeystoreAlgorithm <apnsKeystoreAlgorithm>
+            defaults to sunx509
+
+        --apnsKeystorePassword <apnsKeystorePassword>
+            defaults to 123456
+
+        --apnsKeystoreType <apnsKeystoreType>
+            defaults to PKCS12
+
+        --apnsMockFeedbackHost <apnsMockFeedbackHost>
+            defaults to 127.0.0.1
+
+        --apnsMockFeedbackPort <apnsMockFeedbackPort>
+            defaults to 16003
+
+        --apnsMockGatewayHost <apnsMockGatewayHost>
+            defaults to 127.0.0.1
+
+        --apnsMockGatewayPort <apnsMockGatewayPort>
+            defaults to 16002
+
+        --notificationEndpointHost <notificationEndpointHost>
+            defaults to 127.0.0.1
+
+        --notificationEndpointPort <notificationEndpointPort>
+            defaults to 17000
+----
+
+=== GCM proxy
+
+GCM proxy is started by `gcmProxy` command.
+
+GCM proxy is quite complex to implement due to impossibility of the GCM client library 
+to say where you wish to route the notifications to be sent. You can not set 
+another addresses of GCM notification servers as you can do with APNS client library 
+hence some kind of MITM attack on the certificate level is needed.
+
+[source,bash]
+----
+$ ./proxy help gcmProxy
+NAME
+        proxy gcmProxy - starts GCM proxy
+
+SYNOPSIS
+        proxy gcmProxy --gcmCertificate <gcmCertificate>
+                --gcmCertificateKey <gcmCertificateKey>
+                [--gcmMockServerHost <gcmMockServerHost>]
+                [--gcmMockServerPort <gcmMockServerPort>]
+                [--httpProxyHost <httpProxyHost>] [--httpProxyPort <httpProxyPort>]
+                [--notificationEndpointHost <notificationEndpointHost>]
+                [--notificationEndpointPort <notificationEndpointPort>]
+
+OPTIONS
+        --gcmCertificate <gcmCertificate>
+
+
+        --gcmCertificateKey <gcmCertificateKey>
+
+
+        --gcmMockServerHost <gcmMockServerHost>
+            defaults to 127.0.0.1
+
+        --gcmMockServerPort <gcmMockServerPort>
+            defaults to 16001
+
+        --httpProxyHost <httpProxyHost>
+            defaults to 127.0.0.1
+
+        --httpProxyPort <httpProxyPort>
+            defaults to 16000
+
+        --notificationEndpointHost <notificationEndpointHost>
+            defaults to 127.0.0.1
+
+        --notificationEndpointPort <notificationEndpointPort>
+            defaults to 17000
+----
+
+=== Notification register endpoint
+
+After you send some notifications to this proxy, they are internally cached so 
+you can query the proxy instance what notifications it received so far.
+
+You get these notifications by performing `GET` on address `notificationEndpointHost:notificationEndpointPort`.
+
+The received JSON is just serialized model class you find in `model` artifact.
+
+You can of course unmarshall the JSON at client side into model classes and work with them further as you wish.
+
+You can clear all gathered notifications by calling `notificationEndpointHost:notificationEndpointPort/clear`.
