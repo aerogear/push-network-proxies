@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.jboss.aerogear</groupId>
         <artifactId>proxy-aggregator</artifactId>
-        <version>1.0.0.Alpha1-SNAPSHOT</version>
+        <version>1.0.0-alpha.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
