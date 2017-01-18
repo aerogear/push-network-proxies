@@ -3,8 +3,6 @@ FROM jboss/base-jdk:8
 
 COPY impl/target/proxy-1.0.0-alpha.1-SNAPSHOT.jar /proxy.jar
 
-##RUN ./proxy apnsProxy
-
 EXPOSE 16002 16003
 
 ENV JAVA_OPTS=""
