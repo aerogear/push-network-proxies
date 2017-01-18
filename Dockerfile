@@ -14,4 +14,4 @@ RUN pwd
 EXPOSE 16002 16003
 
 ENV JAVA_OPTS=""
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /opt/jboss/proxy.jar apnsProxy" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /opt/jboss/proxy.jar apnsProxy --apnsMockFeedbackHost 0.0.0.0 --apnsMockGatewayHost 0.0.0.0" ]
