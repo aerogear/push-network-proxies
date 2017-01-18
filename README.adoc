@@ -1,3 +1,12 @@
+== Running in Docker
+
+For APNs currently, just run this:
+
+[source,bash]
+----
+docker run -p 16002-16003:16002-16003 aerogear/push-network-proxies
+----
+
 == Proxy
 
 Proxy acts as a fake notification provider (APNS / GCM). From consumer point of view, the 
