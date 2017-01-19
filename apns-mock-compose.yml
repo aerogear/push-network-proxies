@@ -1,4 +1,5 @@
 apns-mock:
   image: aerogear/push-network-proxies
   ports:
-  - 16002-16003:16002-16003
+  - 16002:16002
+  - 16003:16003
