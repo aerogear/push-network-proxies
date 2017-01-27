@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
-public class GCMNotification {
+public class FCMNotification {
 
     private Map<String, String> data;
 
@@ -82,7 +82,7 @@ public class GCMNotification {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GCMNotification other = (GCMNotification) obj;
+        FCMNotification other = (FCMNotification) obj;
         if (collapseKey == null) {
             if (other.collapseKey != null)
                 return false;

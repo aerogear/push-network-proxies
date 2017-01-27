@@ -1,4 +1,4 @@
-package org.jboss.aerogear.proxy.gcm;
+package org.jboss.aerogear.proxy.fcm;
 
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -11,7 +11,7 @@ import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
-public class MockingGCMProxyServer {
+public class MockingFCMProxyServer {
 
     private String host;
 
@@ -21,7 +21,7 @@ public class MockingGCMProxyServer {
 
     private int mockPort;
 
-    private MockingGCMProxyServer(Builder builder) {
+    private MockingFCMProxyServer(Builder builder) {
         host = builder.host;
         port = builder.port;
         mockServer = builder.mockServer;
@@ -89,8 +89,8 @@ public class MockingGCMProxyServer {
             return this;
         }
 
-        public MockingGCMProxyServer build() {
-            return new MockingGCMProxyServer(this);
+        public MockingFCMProxyServer build() {
+            return new MockingFCMProxyServer(this);
         }
     }
 }

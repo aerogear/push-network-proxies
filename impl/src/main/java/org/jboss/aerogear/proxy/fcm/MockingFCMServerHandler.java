@@ -1,9 +1,9 @@
-package org.jboss.aerogear.proxy.gcm;
+package org.jboss.aerogear.proxy.fcm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import org.jboss.aerogear.proxy.endpoint.model.GCMNotification;
+import org.jboss.aerogear.proxy.endpoint.model.FCMNotification;
 import org.jboss.aerogear.proxy.utils.Tokens;
 
 import io.netty.buffer.ByteBuf;
@@ -34,9 +34,9 @@ import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-public class MockingGCMServerHandler extends SimpleChannelInboundHandler<Object> {
+public class MockingFCMServerHandler extends SimpleChannelInboundHandler<Object> {
 
-    private static final Logger logger = Logger.getLogger(MockingGCMServerHandler.class.getName());
+    private static final Logger logger = Logger.getLogger(MockingFCMServerHandler.class.getName());
 
     private HttpRequest request;
 
@@ -76,14 +76,14 @@ public class MockingGCMServerHandler extends SimpleChannelInboundHandler<Object>
             if (msg instanceof LastHttpContent) {
                 buf.setLength(0);
 
-                if (request.getUri().contains("gcm")) {
+                if (request.getUri().contains("fcm")) {
                     ObjectMapper mapper = new ObjectMapper();
                     mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                     try {
-                        GCMNotification notification = mapper.readValue(requestContentBuffer.toString(), GCMNotification.class);
+                        FCMNotification notification = mapper.readValue(requestContentBuffer.toString(), FCMNotification.class);
 
                         logger.info("PROXY RECEIVED NOTIFICATION " + notification.toString());
-                        GCMNotificationRegister.addNotification(notification);
+                        FCMNotificationRegister.addNotification(notification);
 
                         requestContentBuffer.delete(0, requestContentBuffer.length());
 

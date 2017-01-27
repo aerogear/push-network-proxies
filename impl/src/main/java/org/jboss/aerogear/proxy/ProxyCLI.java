@@ -1,7 +1,7 @@
 package org.jboss.aerogear.proxy;
 
 import org.jboss.aerogear.proxy.command.ApnsProxyCommand;
-import org.jboss.aerogear.proxy.command.GCMProxyCommand;
+import org.jboss.aerogear.proxy.command.FCMProxyCommand;
 
 import io.airlift.airline.Cli;
 import io.airlift.airline.Cli.CliBuilder;
@@ -18,7 +18,7 @@ public class ProxyCLI {
             .withDefaultCommand(Help.class)
             .withCommand(Help.class)
             .withCommand(ApnsProxyCommand.class)
-            .withCommand(GCMProxyCommand.class);
+            .withCommand(FCMProxyCommand.class);
 
         builder.build().parse(args).run();
     }

@@ -11,9 +11,9 @@ import com.google.gson.Gson;
  */
 public class NotificationRegisterResponse {
 
-    private List<ApnsNotification> apnsNotifications = new ArrayList<ApnsNotification>();
+    private List<ApnsNotification> apnsNotifications = new ArrayList();
 
-    private List<GCMNotification> gcmNotifications = new ArrayList<GCMNotification>();
+    private List<FCMNotification> fcmNotifications = new ArrayList();
 
     public List<ApnsNotification> getApnsNotifications() {
         return apnsNotifications;
@@ -23,12 +23,12 @@ public class NotificationRegisterResponse {
         this.apnsNotifications = apnsNotifications;
     }
 
-    public List<GCMNotification> getGcmNotifications() {
-        return gcmNotifications;
+    public List<FCMNotification> getFcmNotifications() {
+        return fcmNotifications;
     }
 
-    public void setGcmNotifications(List<GCMNotification> gcmNotifications) {
-        this.gcmNotifications = gcmNotifications;
+    public void setFcmNotifications(List<FCMNotification> fcmNotifications) {
+        this.fcmNotifications = fcmNotifications;
     }
 
     @Override

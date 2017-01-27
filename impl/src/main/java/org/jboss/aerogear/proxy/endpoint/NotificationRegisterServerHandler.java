@@ -9,7 +9,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import org.jboss.aerogear.proxy.apns.ApnsNotificationRegister;
 import org.jboss.aerogear.proxy.endpoint.model.NotificationRegisterResponse;
-import org.jboss.aerogear.proxy.gcm.GCMNotificationRegister;
+import org.jboss.aerogear.proxy.fcm.FCMNotificationRegister;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -53,7 +53,7 @@ public class NotificationRegisterServerHandler extends SimpleChannelInboundHandl
             FullHttpResponse response = null;
 
             if (uri.endsWith("clear")) {
-                GCMNotificationRegister.clear();
+                FCMNotificationRegister.clear();
                 ApnsNotificationRegister.clear();
                 String responseBody = "{\"result\": \"cleared\" }";
                 response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(responseBody.getBytes()));
@@ -83,7 +83,7 @@ public class NotificationRegisterServerHandler extends SimpleChannelInboundHandl
 
         NotificationRegisterResponse response = new NotificationRegisterResponse();
         response.setApnsNotifications(ApnsNotificationRegister.getNotifications());
-        response.setGcmNotifications(GCMNotificationRegister.getNotifications());
+        response.setFcmNotifications(FCMNotificationRegister.getNotifications());
 
         return response.toString();
     }

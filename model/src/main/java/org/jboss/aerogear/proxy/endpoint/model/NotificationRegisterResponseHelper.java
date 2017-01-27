@@ -2,7 +2,6 @@ package org.jboss.aerogear.proxy.endpoint.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
@@ -12,14 +11,15 @@ public class NotificationRegisterResponseHelper {
 
     public static List<String> getDeviceTokens(final NotificationRegisterResponse notificationRegisterResponse) {
 
-        final List<String> deviceTokens = new ArrayList<String>();
+        final List<String> deviceTokens = new ArrayList();
+
 
         for (final ApnsNotification apnsNotification : notificationRegisterResponse.getApnsNotifications()) {
             deviceTokens.add(apnsNotification.getDeviceToken());
         }
 
-        for (final GCMNotification gcmNotification : notificationRegisterResponse.getGcmNotifications()) {
-            deviceTokens.addAll(gcmNotification.getDeviceTokens());
+        for (final FCMNotification fcmNotification : notificationRegisterResponse.getFcmNotifications()) {
+            deviceTokens.addAll(fcmNotification.getDeviceTokens());
         }
 
         return deviceTokens;
@@ -31,7 +31,7 @@ public class NotificationRegisterResponseHelper {
 
         for (final NotificationRegisterResponse response : responses) {
             mergedNotificationRegisterResponse.getApnsNotifications().addAll(response.getApnsNotifications());
-            mergedNotificationRegisterResponse.getGcmNotifications().addAll(response.getGcmNotifications());
+            mergedNotificationRegisterResponse.getFcmNotifications().addAll(response.getFcmNotifications());
         }
 
         return mergedNotificationRegisterResponse;

@@ -1,4 +1,4 @@
-package org.jboss.aerogear.proxy.gcm;
+package org.jboss.aerogear.proxy.fcm;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -7,11 +7,11 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.ssl.SslContext;
 
-public class MockingGCMServerInitializer extends ChannelInitializer<SocketChannel> {
+public class MockingFCMServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;
 
-    public MockingGCMServerInitializer(SslContext sslCtx) {
+    public MockingFCMServerInitializer(SslContext sslCtx) {
         this.sslCtx = sslCtx;
     }
 
@@ -29,6 +29,6 @@ public class MockingGCMServerInitializer extends ChannelInitializer<SocketChanne
         p.addLast(new HttpResponseEncoder());
         // Remove the following line if you don't want automatic content compression.
         //p.addLast(new HttpContentCompressor());
-        p.addLast(new MockingGCMServerHandler());
+        p.addLast(new MockingFCMServerHandler());
     }
 }

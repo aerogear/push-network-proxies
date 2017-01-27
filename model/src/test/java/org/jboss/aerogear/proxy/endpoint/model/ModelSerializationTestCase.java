@@ -25,8 +25,8 @@ public class ModelSerializationTestCase {
     }
 
     @Test
-    public void gcmNotificationSerializationTest() {
-        GCMNotification notification = new GCMNotification();
+    public void fcmNotificationSerializationTest() {
+        FCMNotification notification = new FCMNotification();
 
         notification.setData(new HashMap<String, String>() {
             {
@@ -50,7 +50,7 @@ public class ModelSerializationTestCase {
 
         String marshalled = notification.toString();
 
-        GCMNotification demarshalled = new Gson().fromJson(marshalled, GCMNotification.class);
+        FCMNotification demarshalled = new Gson().fromJson(marshalled, FCMNotification.class);
 
         Assert.assertEquals(notification, demarshalled);
     }
