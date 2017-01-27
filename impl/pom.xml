@@ -32,7 +32,7 @@
     <!-- Properties -->
     <properties>
         <version.io.netty>4.0.23.Final</version.io.netty>
-        <version.gcm.server>1.0.2</version.gcm.server>
+        <version.gcm.server>1.0.0</version.gcm.server>
         <version.airline>0.7</version.airline>
         <version.gson>2.3.1</version.gson>
         <version.arquillian.spacelift>1.0.0.Alpha7</version.arquillian.spacelift>
@@ -60,8 +60,9 @@
             <version>${version.io.netty}</version>
         </dependency>
 
+
         <dependency>
-            <groupId>com.ganyo</groupId>
+            <groupId>com.google.gcm</groupId>
             <artifactId>gcm-server</artifactId>
             <version>${version.gcm.server}</version>
         </dependency>

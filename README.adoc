@@ -9,7 +9,7 @@ docker run -p 16002-16003:16002-16003 aerogear/push-network-proxies
 
 == Proxy
 
-Proxy acts as a fake notification provider (APNS / GCM). From consumer point of view, the 
+Proxy acts as a fake notification provider (APNS / FCM). From consumer point of view, the
 notifications which the consumer sends to networks hit this proxy and proxy answers the consumer 
 back as if the response came from the real providers.
 
@@ -18,7 +18,7 @@ This project is used for testing purposes.
 Installation is done by `mvn clean install`. Resulting binary is in `impl/target/proxy`.
 
 Proxy binary offers two commands. Every command covers the proxy for one notification platform.
-There are two platfroms implemented - APNS and GCM
+There are two platfroms implemented - APNS and FCM
 
 NOTE: If you want to start proxy for both networks, you have to have two running binaries of `proxy`.
 
@@ -29,7 +29,7 @@ usage: proxy <command> [<args>]
 
 The most commonly used proxy commands are:
     apnsProxy   starts APNS proxy
-    gcmProxy    starts GCM proxy
+    fcmProxy    starts FCM proxy
     help        Display help information
 
 ----
@@ -88,41 +88,41 @@ OPTIONS
             defaults to 17000
 ----
 
-=== GCM proxy
+=== FCM proxy
 
-GCM proxy is started by `gcmProxy` command.
+FCM proxy is started by `fcmProxy` command.
 
-GCM proxy is quite complex to implement due to impossibility of the GCM client library 
+FCM proxy is quite complex to implement due to impossibility of the FCM client library 
 to say where you wish to route the notifications to be sent. You can not set 
-another addresses of GCM notification servers as you can do with APNS client library 
+another addresses of FCM notification servers as you can do with APNS client library 
 hence some kind of MITM attack on the certificate level is needed.
 
 [source,bash]
 ----
-$ ./proxy help gcmProxy
+$ ./proxy help fcmProxy
 NAME
-        proxy gcmProxy - starts GCM proxy
+        proxy fcmProxy - starts FCM proxy
 
 SYNOPSIS
-        proxy gcmProxy --gcmCertificate <gcmCertificate>
-                --gcmCertificateKey <gcmCertificateKey>
-                [--gcmMockServerHost <gcmMockServerHost>]
-                [--gcmMockServerPort <gcmMockServerPort>]
+        proxy fcmProxy --fcmCertificate <fcmCertificate>
+                --fcmCertificateKey <fcmCertificateKey>
+                [--fcmMockServerHost <fcmMockServerHost>]
+                [--fcmMockServerPort <fcmMockServerPort>]
                 [--httpProxyHost <httpProxyHost>] [--httpProxyPort <httpProxyPort>]
                 [--notificationEndpointHost <notificationEndpointHost>]
                 [--notificationEndpointPort <notificationEndpointPort>]
 
 OPTIONS
-        --gcmCertificate <gcmCertificate>
+        --fcmCertificate <fcmCertificate>
 
 
-        --gcmCertificateKey <gcmCertificateKey>
+        --fcmCertificateKey <fcmCertificateKey>
 
 
-        --gcmMockServerHost <gcmMockServerHost>
+        --fcmMockServerHost <fcmMockServerHost>
             defaults to 127.0.0.1
 
-        --gcmMockServerPort <gcmMockServerPort>
+        --fcmMockServerPort <fcmMockServerPort>
             defaults to 16001
 
         --httpProxyHost <httpProxyHost>

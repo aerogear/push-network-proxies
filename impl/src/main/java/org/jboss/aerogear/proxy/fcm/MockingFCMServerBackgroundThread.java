@@ -1,4 +1,4 @@
-package org.jboss.aerogear.proxy.gcm;
+package org.jboss.aerogear.proxy.fcm;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -13,35 +13,35 @@ import java.io.File;
 
 import javax.net.ssl.SSLException;
 
-public class MockingGCMServerBackgroundThread extends Thread {
+public class MockingFCMServerBackgroundThread extends Thread {
 
-    private final String gcmMockServerHost;
+    private final String fcmMockServerHost;
 
-    private final int gcmMockServePort;
+    private final int fcmMockServePort;
 
-    private final File gcmCertificateFile;
+    private final File fcmCertificateFile;
 
-    private final File gcmCertificateKeyFile;
+    private final File fcmCertificateKeyFile;
 
     private Channel channel;
 
-    public MockingGCMServerBackgroundThread(String gcmMockServerHost,
-        int gcmMockServePort,
-        File gcmCertificateFile,
-        File gcmCertificateKeyFile) {
+    public MockingFCMServerBackgroundThread(String fcmMockServerHost,
+                                            int fcmMockServePort,
+                                            File fcmCertificateFile,
+                                            File fcmCertificateKeyFile) {
 
-        this.gcmMockServerHost = gcmMockServerHost;
-        this.gcmMockServePort = gcmMockServePort;
-        this.gcmCertificateFile = gcmCertificateFile;
-        this.gcmCertificateKeyFile = gcmCertificateKeyFile;
+        this.fcmMockServerHost = fcmMockServerHost;
+        this.fcmMockServePort = fcmMockServePort;
+        this.fcmCertificateFile = fcmCertificateFile;
+        this.fcmCertificateKeyFile = fcmCertificateKeyFile;
     }
 
-    public String getGcmMockServerHost() {
-        return gcmMockServerHost;
+    public String getFcmMockServerHost() {
+        return fcmMockServerHost;
     }
 
-    public int getGcmMockServePort() {
-        return gcmMockServePort;
+    public int getFcmMockServePort() {
+        return fcmMockServePort;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MockingGCMServerBackgroundThread extends Thread {
         SslContext sslCtx = null;
 
         try {
-            sslCtx = SslContext.newServerContext(gcmCertificateFile, gcmCertificateKeyFile);
+            sslCtx = SslContext.newServerContext(fcmCertificateFile, fcmCertificateKeyFile);
         } catch (SSLException e) {
             e.printStackTrace();
         }
@@ -64,9 +64,9 @@ public class MockingGCMServerBackgroundThread extends Thread {
             serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new MockingGCMServerInitializer(sslCtx));
+                .childHandler(new MockingFCMServerInitializer(sslCtx));
 
-            channel = serverBootstrap.bind(gcmMockServerHost, gcmMockServePort).sync().channel();
+            channel = serverBootstrap.bind(fcmMockServerHost, fcmMockServePort).sync().channel();
 
             channel.closeFuture().sync();
         } catch (InterruptedException e) {

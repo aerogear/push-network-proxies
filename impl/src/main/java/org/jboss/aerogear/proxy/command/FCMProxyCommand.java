@@ -5,10 +5,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aerogear.proxy.endpoint.NotificationRegisterEndpoint;
-import org.jboss.aerogear.proxy.gcm.MockingGCMProxyServer;
+import org.jboss.aerogear.proxy.fcm.MockingFCMProxyServer;
 import org.littleshoot.proxy.HttpProxyServer;
 
-import org.jboss.aerogear.proxy.gcm.MockingGCMServerBackgroundThread;
+import org.jboss.aerogear.proxy.fcm.MockingFCMServerBackgroundThread;
 
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
@@ -17,10 +17,10 @@ import io.airlift.airline.Option;
  *
  * @author <a href="mailto:miklosovic@gmail.com>Stefan Miklosovic</a>
  */
-@Command(name = "gcmProxy", description = "starts GCM proxy")
-public class GCMProxyCommand extends NotificationRegisterEndpoint implements Runnable {
+@Command(name = "fcmProxy", description = "starts FCM proxy")
+public class FCMProxyCommand extends NotificationRegisterEndpoint implements Runnable {
 
-    private static final Logger logger = Logger.getLogger(GCMProxyCommand.class.getName());
+    private static final Logger logger = Logger.getLogger(FCMProxyCommand.class.getName());
 
     @Option(name = "--httpProxyHost", description = "defaults to 127.0.0.1")
     private String httpProxyHost = "127.0.0.1";
@@ -28,17 +28,17 @@ public class GCMProxyCommand extends NotificationRegisterEndpoint implements Run
     @Option(name = "--httpProxyPort", description = "defaults to 16000")
     private int httpProxyPort = 16000;
 
-    @Option(name = "--gcmMockServerHost", description = "defaults to 127.0.0.1")
-    private String gcmMockServerHost = "127.0.0.1";
+    @Option(name = "--fcmMockServerHost", description = "defaults to 127.0.0.1")
+    private String fcmMockServerHost = "127.0.0.1";
 
-    @Option(name = "--gcmMockServerPort", description = "defaults to 16001")
-    private int gcmMockServerPort = 16001;
+    @Option(name = "--fcmMockServerPort", description = "defaults to 16001")
+    private int fcmMockServerPort = 16001;
 
-    @Option(name = "--gcmCertificate", required = true)
-    private String gcmCertificate;
+    @Option(name = "--fcmCertificate", required = true)
+    private String fcmCertificate;
 
-    @Option(name = "--gcmCertificateKey", required = true)
-    private String gcmCertificateKey;
+    @Option(name = "--fcmCertificateKey", required = true)
+    private String fcmCertificateKey;
 
     public void run() {
 
@@ -46,24 +46,26 @@ public class GCMProxyCommand extends NotificationRegisterEndpoint implements Run
 
         startNotificationRegisterEndpoint(notificationEndpointHost, notificationEndpointPort);
 
-        MockingGCMServerBackgroundThread backgroundThread = new MockingGCMServerBackgroundThread(gcmMockServerHost,
-            gcmMockServerPort,
-            new File(gcmCertificate),
-            new File(gcmCertificateKey));
+        MockingFCMServerBackgroundThread backgroundThread =
+            new MockingFCMServerBackgroundThread(
+                fcmMockServerHost,
+                fcmMockServerPort,
+                new File(fcmCertificate),
+                new File(fcmCertificateKey));
 
         backgroundThread.start();
 
-        logger.log(Level.INFO, "Background thread started in GCMProxyCommand");
+        logger.log(Level.INFO, "Background thread started in FCMProxyCommand");
 
-        HttpProxyServer server = new MockingGCMProxyServer.Builder()
+        HttpProxyServer server = new MockingFCMProxyServer.Builder()
             .withHost(httpProxyHost)
             .withPort(httpProxyPort)
-            .withMockServerHost(gcmMockServerHost)
-            .withMockServerPort(gcmMockServerPort)
+            .withMockServerHost(fcmMockServerHost)
+            .withMockServerPort(fcmMockServerPort)
             .build()
             .start();
 
-        logger.log(Level.INFO, "Proxy server started in GCMProxyCommand");
+        logger.log(Level.INFO, "Proxy server started in FCMProxyCommand");
 
         Runtime.getRuntime().addShutdownHook(new ServerCleanupThread(server, backgroundThread, this));
     }
@@ -74,11 +76,11 @@ public class GCMProxyCommand extends NotificationRegisterEndpoint implements Run
 
         private final HttpProxyServer proxyServer;
 
-        private MockingGCMServerBackgroundThread backgroundThread;
+        private MockingFCMServerBackgroundThread backgroundThread;
 
-        private GCMProxyCommand command;
+        private FCMProxyCommand command;
 
-        public ServerCleanupThread(HttpProxyServer proxyServer, MockingGCMServerBackgroundThread backgroundThread, GCMProxyCommand command) {
+        public ServerCleanupThread(HttpProxyServer proxyServer, MockingFCMServerBackgroundThread backgroundThread, FCMProxyCommand command) {
             this.proxyServer = proxyServer;
             this.backgroundThread = backgroundThread;
             this.command = command;
@@ -105,16 +107,16 @@ public class GCMProxyCommand extends NotificationRegisterEndpoint implements Run
     }
 
     private void validate() {
-        File certificateFile = new File(gcmCertificate);
-        File certificateKeyFile = new File(gcmCertificateKey);
+        File certificateFile = new File(fcmCertificate);
+        File certificateKeyFile = new File(fcmCertificateKey);
 
         if (!certificateFile.exists() || !certificateFile.isFile() || !certificateFile.canRead()) {
-            throw new IllegalArgumentException("GCM certificate file " + gcmCertificate + " does not exist "
+            throw new IllegalArgumentException("FCM certificate file " + fcmCertificate + " does not exist "
                 + "or it is not a file or it can not be read");
         }
 
         if (!certificateKeyFile.exists() || !certificateKeyFile.isFile() || !certificateKeyFile.canRead()) {
-            throw new IllegalArgumentException("GCM certificate key file " + gcmCertificateKey + " does not exist "
+            throw new IllegalArgumentException("FCM certificate key file " + fcmCertificateKey + " does not exist "
                 + "or it is not a file or it can not be read");
         }
     }
