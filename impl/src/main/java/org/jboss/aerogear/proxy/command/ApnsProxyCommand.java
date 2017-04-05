@@ -1,13 +1,23 @@
 package org.jboss.aerogear.proxy.command;
 
-import java.net.UnknownHostException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.cert.X509Certificate;
+import java.util.Random;
 
-import org.jboss.aerogear.proxy.apns.ApnsServerSimulator;
-import org.jboss.aerogear.proxy.apns.ApnsSocketFactory;
+import com.relayrides.pushy.apns.MockApnsServer;
+import com.relayrides.pushy.apns.MockApnsServerBuilder;
+import io.netty.channel.nio.NioEventLoopGroup;
 import org.jboss.aerogear.proxy.endpoint.NotificationRegisterEndpoint;
 
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
+import org.jboss.aerogear.proxy.utils.P12Util;
+import org.jboss.aerogear.proxy.utils.SSLHelper;
 
 /**
  *
@@ -16,19 +26,15 @@ import io.airlift.airline.Option;
 @Command(name = "apnsProxy", description = "starts APNS proxy")
 public class ApnsProxyCommand extends NotificationRegisterEndpoint {
 
+    private static final int TOKEN_LENGTH = 32;
+
     // simulator related
 
     @Option(name = "--apnsMockGatewayHost", description = "defaults to 127.0.0.1")
     private String apnsMockGatewayHost = "127.0.0.1";
 
     @Option(name = "--apnsMockGatewayPort", description = "defaults to 16002")
-    private int apnsMockGatewayPort = 16002;
-
-    @Option(name = "--apnsMockFeedbackHost", description = "defaults to 127.0.0.1")
-    private String apnsMockFeedbackHost = "127.0.0.1";
-
-    @Option(name = "--apnsMockFeedbackPort", description = "defaults to 16003")
-    private int apnsMockFeedbackPort = 16003;
+    private int apnsMockGatewayPort = 18443;
 
     // Certificate related
 
@@ -49,52 +55,55 @@ public class ApnsProxyCommand extends NotificationRegisterEndpoint {
     @Override
     public void run() {
 
-        startNotificationRegisterEndpoint(notificationEndpointHost, notificationEndpointPort);
-
-        ApnsSocketFactory apnsSocketFactory = new ApnsSocketFactory.Builder()
-            .withApnsKeystore(apnsKeystore)
-            .withApnsKeystoreAlgorithm(apnsKeystoreAlgorithm)
-            .withApnsKeystorePassword(apnsKeystorePassword)
-            .withApnsKeystoreType(apnsKeystoreType)
-            .withResourceServerStore(resourceServerStore)
-            .build();
-
-        ApnsServerSimulator apnsServerSimulator;
-
         try {
-            apnsServerSimulator = new ApnsServerSimulator(
-                apnsSocketFactory.build(),
-                apnsMockGatewayHost,
-                apnsMockGatewayPort,
-                apnsMockFeedbackHost,
-                apnsMockFeedbackPort);
-        } catch (UnknownHostException ex) {
-            throw new IllegalStateException("Unable to instantiate APNS server simulator.", ex);
+            final KeyStore.PrivateKeyEntry privateKeyEntry = P12Util.getFirstPrivateKeyEntryFromP12InputStream(
+                    getInputStream(), apnsKeystorePassword);
+
+            final MockApnsServerBuilder serverBuilder = new MockApnsServerBuilder()
+                    .setServerCredentials(new X509Certificate[] { (X509Certificate) privateKeyEntry.getCertificate() }, privateKeyEntry.getPrivateKey(), null)
+                    .setEventLoopGroup(new NioEventLoopGroup(4));
+
+            final MockApnsServer server = serverBuilder.build();
+
+            server.registerDeviceTokenForTopic("org.aerogear.test", generateRandomToken(), null);
+
+            server.start(apnsMockGatewayPort).await();
+
+
+        } catch (KeyStoreException | InterruptedException | IOException e) {
+            e.printStackTrace();
         }
 
-        Runtime.getRuntime().addShutdownHook(new ApnsProxyShutdownHook(apnsServerSimulator, this));
-
-        apnsServerSimulator.start();
     }
 
-    private static class ApnsProxyShutdownHook extends Thread {
-
-        private final ApnsServerSimulator apnsServerSimulator;
-
-        private final ApnsProxyCommand apnsProxyCommand;
-
-        public ApnsProxyShutdownHook(final ApnsServerSimulator apnsServerSimulator, ApnsProxyCommand apnsProxyCommand) {
-            this.apnsServerSimulator = apnsServerSimulator;
-            this.apnsProxyCommand = apnsProxyCommand;
-        }
-
-        @Override
-        public void run() {
-            if (apnsServerSimulator.isStarted()) {
-                apnsServerSimulator.stop();
+    private InputStream getInputStream() {
+        InputStream stream;
+        try {
+            File externalApnsCertificateFile = (apnsKeystore == null ? null : new File(apnsKeystore));
+            if (externalApnsCertificateFile != null) {
+                stream = new FileInputStream(externalApnsCertificateFile);
+            } else {
+                stream = SSLHelper.class.getResourceAsStream("/" + resourceServerStore);
             }
+            assert stream != null;
 
-            apnsProxyCommand.stopNotificationRegisterEndpoint();
+            return stream;
+
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to build Keystore file", ex.getCause());
         }
+    }
+
+    private String generateRandomToken() {
+        final byte[] tokenBytes = new byte[TOKEN_LENGTH];
+        new Random().nextBytes(tokenBytes);
+
+        final StringBuilder builder = new StringBuilder(TOKEN_LENGTH * 2);
+
+        for (final byte b : tokenBytes) {
+            builder.append(String.format("%02x", b));
+        }
+
+        return builder.toString();
     }
 }
