@@ -7,7 +7,7 @@ RUN yum install -y unzip wget && yum -q clean all
 
 USER jboss
 
-RUN wget -O proxy.jar https://repository.jboss.org/nexus/content/repositories/snapshots/org/jboss/aerogear/proxy/1.0.0.Alpha1-SNAPSHOT/proxy-1.0.0.Alpha1-20170117.164727-1.jar
+RUN wget -O proxy.jar https://s3.eu-central-1.amazonaws.com/ups-logging/apns-mock.jar
 RUN pwd 
 #COPY ./proxy.jar /proxy.jar
 
