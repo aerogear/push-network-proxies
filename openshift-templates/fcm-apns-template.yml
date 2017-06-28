@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: fcm-wiremock
+  annotations:
+    description: "Simple mock of FCM and APNs for testing purposese"
+    tags: "fcm,wiremock,mock,proxy,apns,java"
+
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: fcm-wiremock
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: fcm-wiremock
+    strategy:
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 180
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          deploymentconfig: fcm-wiremock
+      spec:
+        containers:
+        - image: ${FCM_WIREMOCK_IMAGE}
+          imagePullPolicy: Always
+          name: fcm-wiremock
+          ports:
+          - containerPort: 3000 
+            protocol: TCP
+    triggers:
+    - type: ConfigChange
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: fcm-wiremock
+  spec:
+    ports:
+    - name: fcm-wiremock-endpoint
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      deploymentconfig: fcm-wiremock
+
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: apns-proxy
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: apns-proxy
+    strategy:
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 180
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          deploymentconfig: apns-proxy
+      spec:
+        containers:
+        - image: ${APNS_PROXY_IMAGE}
+          imagePullPolicy: Always
+          name: apns-proxy
+          ports:
+          - containerPort: 16002 
+            protocol: TCP
+    triggers:
+    - type: ConfigChange
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: apns-proxy
+  spec:
+    ports:
+    - name: apns-proxy-endpoint
+      port: 16002
+      protocol: TCP
+      targetPort: 16002
+    selector:
+      deploymentconfig: apns-proxy
+
+parameters:
+- name: FCM_WIREMOCK_IMAGE
+  description: "Docker image to the FCM Wiremock"
+  value: "docker.io/jgallaso/wiremock-fcm:latest"
+  required: true
+
+- name: APNS_PROXY_IMAGE
+  description: "Docker image to the APNS Proxy"
+  value: "docker.io/jgallaso/apns-proxy:latest"
+  required: true
