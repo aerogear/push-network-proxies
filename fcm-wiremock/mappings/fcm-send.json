@@ -1,0 +1,24 @@
+{
+    "request": {
+        "url": "/fcm/send",
+        "method": "POST"
+    },
+    "response": {
+        "status": 200,
+        "fixedDelayMilliseconds": 10,
+        "jsonBody": {
+            "multicast_id": 108,
+            "success": 1,
+            "failure": 0,
+            "canonical_ids": 0,
+            "results": [
+                {
+                    "message_id": "1:08"
+                }
+            ]
+        },
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}
